@@ -36,6 +36,9 @@ jobs:
       - name: Run scraper
         run: python scraper.py
 
+      - name: Print prices (for log visibility)
+        run: cat prices.json
+
       - name: Prepare Pages site
         run: |
           mkdir -p site
