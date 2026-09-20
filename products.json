@@ -1,0 +1,46 @@
+{
+  "products": [
+    {
+      "name": "Volkoren brood",
+      "ah":    { "label": "AH Volkoren heel", "url": "https://www.ah.nl/producten/product/wi112356/ah-volkoren-heel" },
+      "jumbo": { "label": "Jumbo Volkoren Brood", "url": "https://www.jumbo.com/producten/brood-en-gebak/broden/volkoren-brood/jumbo/" },
+      "lidl":  { "label": "Halfje extra volkorenbrood", "url": "https://www.lidl.nl/p/halfje-extra-volkorenbrood/p6606405" }
+    },
+    {
+      "name": "Volle yoghurt",
+      "ah":    { "label": "De Zaanse Hoeve Volle yoghurt", "url": "https://www.ah.nl/producten/product/wi118132/de-zaanse-hoeve-volle-yoghurt" },
+      "jumbo": { "label": "Jumbo Volle Yoghurt 1L", "url": "https://www.jumbo.com/producten/jumbo-volle-yoghurt-1l-235186PAK" },
+      "lidl":  { "label": "Volle yoghurt", "url": "https://www.lidl.nl/p/volle-yoghurt/p1086" }
+    },
+    {
+      "name": "Houdbare halfvolle melk",
+      "ah":    { "label": "AH Houdbare halfvolle melk", "url": "https://www.ah.nl/producten/product/wi130270/ah-houdbare-halfvolle-melk" },
+      "jumbo": { "label": "Jumbo Houdbare Halfvolle Melk 1L", "url": "https://www.jumbo.com/producten/jumbo-houdbare-halfvolle-melk-1-l-49609STK" },
+      "lidl":  { "label": "Houdbare halfvolle weidemelk", "url": "https://www.lidl.nl/p/halfvolle-weidemelk-houdbaar/p128758" }
+    },
+    {
+      "name": "Kipfilet 800g",
+      "ah":    { "label": "AH Kipfilet 800g", "url": "https://www.ah.nl/producten/product/wi129225/ah-kipfilet" },
+      "jumbo": { "label": "Jumbo Kipfilet 800g", "url": "https://www.jumbo.com/producten/jumbo-kipfilet-800-g-753633KGR" },
+      "lidl":  { "label": "Kipfilet", "url": "https://www.lidl.nl/p/kipfilet/p128018" }
+    },
+    {
+      "name": "Rundergehakt 1000g",
+      "ah":    { "label": "AH Rundergehakt 1000g", "url": "https://www.ah.nl/producten/product/wi3954/ah-rundergehakt" },
+      "jumbo": { "label": "Jumbo Rundergehakt 1kg", "url": "https://www.jumbo.com/producten/jumbo-rundergehakt-1-kg-629761TRA" },
+      "lidl":  { "label": "Mager rundergehakt", "url": "https://www.lidl.nl/p/mager-rundergehakt/p10000444" }
+    },
+    {
+      "name": "Mozzarella",
+      "ah":    { "label": "AH Mozzarella", "url": "https://www.ah.nl/producten/product/wi195370/ah-mozzarella" },
+      "jumbo": { "label": "Jumbo Mozzarella 220g", "url": "https://www.jumbo.com/producten/jumbo-mozzarella-220-g-495582ZK" },
+      "lidl":  { "label": "Galbani Mozzarella", "url": "https://www.lidl.nl/p/galbani-mozzarella/p10013609" }
+    },
+    {
+      "name": "Goudse jong belegen 30+ stuk",
+      "ah":    { "label": "AH Goudse jong belegen 30+ stuk", "url": "https://www.ah.nl/producten/product/wi127451/ah-goudse-jong-belegen-30-stuk" },
+      "jumbo": { "label": "Jumbo Goudse Kaas Jong Belegen", "url": "https://www.jumbo.com/producten/jumbo-jong-belegen-20-goudse-kaas-389597KGR" },
+      "lidl":  { "label": "Goudse kaas jong belegen 30+ stuk", "url": "https://www.lidl.nl/p/goudse-kaas-jong-belegen-30-stuk/p150916" }
+    }
+  ]
+}
