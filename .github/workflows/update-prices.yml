@@ -1,0 +1,51 @@
+name: Update grocery prices
+
+on:
+  schedule:
+    - cron: "0 6 * * *"   # daily at 06:00 UTC
+  workflow_dispatch: {}   # lets you trigger it manually from the Actions tab
+  push:
+    branches: [ "claude/product-price-tracker-s7z5rj" ]
+    paths:
+      - "scraper.py"
+      - "products.json"
+      - ".github/workflows/update-prices.yml"
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  scrape-and-publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run scraper
+        run: python scraper.py
+
+      - name: Prepare Pages site
+        run: |
+          mkdir -p site
+          cp index.html site/index.html
+          cp prices.csv site/prices.csv
+          cp prices.json site/prices.json
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
+      - id: deployment
+        uses: actions/deploy-pages@v4
