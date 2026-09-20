@@ -1,2 +1,7 @@
 __pycache__/
 *.pyc
+
+# scraper output — regenerate locally with `python scraper.py`
+index.html
+prices.csv
+prices.json
