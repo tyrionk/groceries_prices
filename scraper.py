@@ -12,6 +12,12 @@ Notes:
 - This must be run from a machine that can reach ah.nl, jumbo.com and
   lidl.nl directly (it will NOT work from a sandboxed/proxied environment
   that blocks those domains).
+- ah.nl currently 403s every plain requests.get() here, including from
+  GitHub Actions runners - this looks like bot detection on datacenter
+  IPs specifically (Jumbo and Lidl scrape fine with the same code).
+  Adding more browser-like headers did not help and made Jumbo/Lidl
+  worse, so headers are kept minimal. A real fix likely needs a
+  headless browser (Playwright) or running from a residential IP.
 - Site markup changes over time. If a product's price stops being found,
   open PRICE_EXTRACTION below and add/adjust a pattern, or update the
   product URL in products.json (product pages get retired/renumbered).
@@ -30,15 +36,7 @@ HEADERS = {
         "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
         "(KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
     ),
-    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
     "Accept-Language": "nl-NL,nl;q=0.9,en;q=0.8",
-    "Accept-Encoding": "gzip, deflate, br",
-    "Sec-Fetch-Dest": "document",
-    "Sec-Fetch-Mode": "navigate",
-    "Sec-Fetch-Site": "none",
-    "Sec-Fetch-User": "?1",
-    "Upgrade-Insecure-Requests": "1",
-    "Connection": "keep-alive",
 }
 
 ROOT = Path(__file__).parent
