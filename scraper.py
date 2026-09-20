@@ -60,7 +60,13 @@ def fetch(url: str) -> str | None:
 
 
 def price_from_jsonld(html: str) -> float | None:
-    """Look for schema.org Product/Offer price in <script type=application/ld+json>."""
+    """Look for schema.org Product/Offer price in <script type=application/ld+json>.
+
+    Only trusts a price that hangs off an object explicitly typed Product
+    (not any stray "price" key anywhere in the page's JSON-LD graph, which
+    picked up unrelated numbers - e.g. from a recommended-products carousel
+    or an unrelated schema block - on first attempts against real sites).
+    """
     soup = BeautifulSoup(html, "html.parser")
     for tag in soup.find_all("script", type="application/ld+json"):
         try:
@@ -69,60 +75,82 @@ def price_from_jsonld(html: str) -> float | None:
             continue
         candidates = data if isinstance(data, list) else [data]
         for item in candidates:
-            price = _dig_price(item)
+            price = _find_product_price(item)
             if price is not None:
                 return price
     return None
 
 
-def _dig_price(obj) -> float | None:
+def _is_product_type(type_field) -> bool:
+    types = type_field if isinstance(type_field, list) else [type_field]
+    return any(isinstance(t, str) and t.rstrip("/").split("/")[-1] == "Product" for t in types)
+
+
+def _find_product_price(obj) -> float | None:
     if isinstance(obj, dict):
-        offers = obj.get("offers")
-        if offers:
-            price = _dig_price(offers)
+        if _is_product_type(obj.get("@type")):
+            price = _extract_offer_price(obj.get("offers"))
             if price is not None:
                 return price
-        if "price" in obj:
-            try:
-                return float(str(obj["price"]).replace(",", "."))
-            except ValueError:
-                pass
         for v in obj.values():
-            price = _dig_price(v)
+            price = _find_product_price(v)
             if price is not None:
                 return price
     elif isinstance(obj, list):
         for v in obj:
-            price = _dig_price(v)
+            price = _find_product_price(v)
             if price is not None:
                 return price
     return None
 
 
-def price_from_regex(html: str) -> float | None:
-    """Fallback: look for embedded price fields or euro amounts near 'price'."""
-    patterns = [
-        r'"priceInCents"\s*:\s*(\d+)',
-        r'"price"\s*:\s*"?(\d+(?:\.\d{1,2})?)"?',
-        r'"currentPrice"\s*:\s*(\d+(?:\.\d{1,2})?)',
-    ]
-    for pat in patterns:
-        m = re.search(pat, html)
-        if m:
-            val = float(m.group(1))
-            if "InCents" in pat:
-                val /= 100
-            if val > 0:
-                return val
+def _extract_offer_price(offers) -> float | None:
+    if isinstance(offers, list):
+        for o in offers:
+            price = _extract_offer_price(o)
+            if price is not None:
+                return price
+        return None
+    if isinstance(offers, dict):
+        currency = offers.get("priceCurrency")
+        if currency and currency != "EUR":
+            return None
+        if "price" in offers:
+            try:
+                return float(str(offers["price"]).replace(",", "."))
+            except ValueError:
+                return None
+    return None
 
-    m = re.search(r"€\s?(\d+[,.]\d{2})", html)
+
+def price_from_regex(html: str) -> float | None:
+    """Fallback when no typed Product JSON-LD is found: an explicit euro
+    amount printed on the page (e.g. "€ 1,79"). Deliberately does NOT match
+    bare `"price": N` JSON fields - those turned out to belong to unrelated
+    objects (other products, recommendations) on real pages and produced
+    nonsense values like "€506" for a loaf of bread."""
+    m = re.search(r"€\s?(\d{1,2}[,.]\d{2})", html)
     if m:
         return float(m.group(1).replace(",", "."))
     return None
 
 
+# Grocery items in this list plausibly cost between 10 cents and 30 euros.
+# A price outside that range is almost certainly a mis-extracted number
+# (a product ID, weight, rating, unrelated offer, etc.), so it's rejected
+# rather than shown as if it were real - as happened on the first two
+# scraper runs against the live sites.
+PLAUSIBLE_RANGE = (0.10, 30.0)
+
+
 def extract_price(html: str) -> float | None:
-    return price_from_jsonld(html) or price_from_regex(html)
+    price = price_from_jsonld(html) or price_from_regex(html)
+    if price is None:
+        return None
+    if not (PLAUSIBLE_RANGE[0] <= price <= PLAUSIBLE_RANGE[1]):
+        print(f"    ! extracted price {price} outside plausible range, discarding")
+        return None
+    return price
 
 
 def main():
