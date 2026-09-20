@@ -30,7 +30,15 @@ HEADERS = {
         "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
         "(KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
     ),
+    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
     "Accept-Language": "nl-NL,nl;q=0.9,en;q=0.8",
+    "Accept-Encoding": "gzip, deflate, br",
+    "Sec-Fetch-Dest": "document",
+    "Sec-Fetch-Mode": "navigate",
+    "Sec-Fetch-Site": "none",
+    "Sec-Fetch-User": "?1",
+    "Upgrade-Insecure-Requests": "1",
+    "Connection": "keep-alive",
 }
 
 ROOT = Path(__file__).parent
@@ -39,10 +47,13 @@ OUTPUT_JSON = ROOT / "prices.json"
 OUTPUT_CSV = ROOT / "prices.csv"
 OUTPUT_HTML = ROOT / "index.html"
 
+SESSION = requests.Session()
+SESSION.headers.update(HEADERS)
+
 
 def fetch(url: str) -> str | None:
     try:
-        resp = requests.get(url, headers=HEADERS, timeout=20)
+        resp = SESSION.get(url, timeout=20)
         resp.raise_for_status()
         return resp.text
     except requests.RequestException as e:
